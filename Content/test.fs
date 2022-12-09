@@ -1,13 +1,4 @@
-j = 1;
-i = j;
+j = 315;
+i = 315;
 
-Write(i + " " + j);
-
-if i != j
-{
-    Write("Test");
-}
-else
-{
-    Write("not a test");
-}
+Save("a.txt", 1);

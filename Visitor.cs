@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Antlr4.Runtime.Misc;
 using FizzleCompiler.Content;
 using static FizzleCompiler.Content.FizzleParser;
+using System.IO;
 
 namespace FizzleCompiler
 {
@@ -21,7 +22,46 @@ namespace FizzleCompiler
             Variables["PI"] = Math.PI;
             Variables["E"] = Math.E;
             Variables["Write"] = new Func<object?[], object?>(Write);
+            Variables["Save"] = new Func<object?[], object?>(Save);
+
         }
+        // private void Save(string Path, string[] Contents)
+        // {
+        //     return save!;
+        // }
+        private string GetExtension(string Path) => new FileInfo(Path).Extension;
+        private object? Save(object?[] args)
+        {
+            object[]? Contents;
+            if (args.Length < 1)
+                throw new Exception("Please provide the proper args length for Save.");
+
+
+            var Path = args[0]!.ToString();
+
+            if (!GetExtension(Path!).Equals(".txt"))
+                Path = Environment.CurrentDirectory + "/test.txt";
+            // TODO: Fix logic
+            if (!Path!.Equals("test.txt"))
+                Contents = args[0..^1]!;
+            else
+                Contents = args[0..^0]!;
+
+            if (Path is not null)
+                using (StreamWriter writer = new StreamWriter(Path))
+                {
+                    foreach (var line in Contents)
+                    {
+                        writer.WriteLine(line);
+                        System.Console.WriteLine($"Saving {line} to {Path}");
+                    }
+                    writer.Close();
+                }
+
+
+            return null;
+        }
+
 
         private object? Write(object?[] args)
         {
@@ -33,6 +73,7 @@ namespace FizzleCompiler
 
             return null;
         }
+
         public override object? VisitFunctionCall(FunctionCallContext context)
         {
             var name = context.IDENTIFIER().GetText();
@@ -170,15 +211,8 @@ namespace FizzleCompiler
 
             return null;
         }
-        public override object? VisitIfBlock(IfBlockContext context)
-        {
-            Func<object?, bool> condition = context.elseIfBlock().GetText() == "if" ? IsTrue : IsFalse;
-            if (condition(Visit(context.expression())))
-                Visit(context.block());
-            else
-                Visit(context.elseIfBlock());
-            return null;
-        }
+
+
         public void PrintLeftRight(object? left, object? right) => System.Console.WriteLine($"{left}{right}");
         public override object? VisitComparisonExpression(ComparisonExpressionContext context)
         {
@@ -187,19 +221,20 @@ namespace FizzleCompiler
 
             var op = context.compareOp().GetText();
 
-
             return op switch
             {
                 "==" => IsEquals(left, right),
                 "!=" => NotEquals(left, right),
                 ">" => GreaterThan(left, right),
                 "<" => LessThan(left, right),
-                // ">=" => GreaterThanOrEqual(left, right),
-                // "<=" => LessThanOrEqual(left, right),
+                ">=" => GreaterThanOrEqual(left, right),
+                "<=" => LessThanOrEqual(left, right),
                 _ => throw new NotImplementedException("Invalid Operation")
             };
 
         }
+
+
 
         private bool IsEquals(object? left, object? right)
         {
@@ -231,7 +266,22 @@ namespace FizzleCompiler
             if (left is float lFloat && right is int rInt) return lFloat < rInt;
             throw new Exception($"Cannot compare values of types {left?.GetType()} and {right?.GetType()}.");
         }
-
+        private bool GreaterThanOrEqual(object? left, object? right)
+        {
+            if (left is int l && right is int r) return l >= r;
+            if (left is float lf && right is float rf) return lf >= rf;
+            if (left is int lInt && right is float rFloat) return lInt >= rFloat;
+            if (left is float lFloat && right is int rInt) return lFloat >= rInt;
+            throw new Exception($"Cannot compare values of types {left?.GetType()} and {right?.GetType()}.");
+        }
+        private bool LessThanOrEqual(object? left, object? right)
+        {
+            if (left is int l && right is int r) return l <= r;
+            if (left is float lf && right is float rf) return lf <= rf;
+            if (left is int lInt && right is float rFloat) return lInt <= rFloat;
+            if (left is float lFloat && right is int rInt) return lFloat <= rInt;
+            throw new Exception($"Cannot compare values of types {left?.GetType()} and {right?.GetType()}.");
+        }
         private bool IsTrue(object? value)
         {
             if (value is bool b) return b;
