@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from c:\Users\Nicho\Desktop\C#\FizzleCompiler\Content\Fizzle.g4 by ANTLR 4.6.6
+// Generated from C:\Users\Nicho\Desktop\C#\FizzleCompiler\Content\Fizzle.g4 by ANTLR 4.6.6
 
 // Unreachable code detected
 #pragma warning disable 0162

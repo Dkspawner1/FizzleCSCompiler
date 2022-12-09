@@ -30,7 +30,6 @@ expression
     | expression boolOp expression          #booleanExpression
     ;
 
-
 multOp: '*' | '/' | '%' ;
 addOp: '+' | '-' ;
 compareOp: '==' | '!=' | '>' | '<' | '>=' | '<=' ;
@@ -38,7 +37,7 @@ boolOp: BOOL_OPERATOR;
 
 BOOL_OPERATOR: 'and' | 'or' | 'xor' ;
 
-constant: INTEGER | FLOAT |STRING | BOOL | NULL;
+constant: INTEGER | FLOAT | STRING | BOOL | NULL;
 
 INTEGER: [0-9]+;
 FLOAT: [0-9]+ '.' [0-9]+;
