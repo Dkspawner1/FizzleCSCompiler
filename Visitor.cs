@@ -15,14 +15,46 @@ namespace FizzleCompiler
     public class Visitor : FizzleBaseVisitor<object?>
     {
         Dictionary<string, object?> Variables { get; } = new();
+
+        public Visitor()
+        {
+            Variables["PI"] = Math.PI;
+            Variables["E"] = Math.E;
+            Variables["Write"] = new Func<object?[], object?>(Write);
+        }
+
+        private object? Write(object?[] args)
+        {
+            for (int i = 0; i < args.Length; i++)
+            {
+                object? arg = args[i];
+                Console.WriteLine(arg);
+            }
+
+            return null;
+        }
+        public override object? VisitFunctionCall(FunctionCallContext context)
+        {
+            var name = context.IDENTIFIER().GetText();
+            var args = context.expression().Select(Visit).ToArray();
+
+            if (!Variables.ContainsKey(name))
+                throw new Exception($"Function {name} is not defined.");
+
+            if (!(Variables[name] is Func<object?[], object?> func))
+                throw new Exception($"Variable {name} is not a function.");
+
+            return func(args);
+
+        }
         public override object? VisitAssignment(AssignmentContext context)
         {
             var varName = context.IDENTIFIER().GetText();
             var value = Visit(context.expression());
             Variables[varName] = value;
-#if DEBUG
-            Console.WriteLine($"{Variables[varName]!.ToString() ?? $"{Variables[varName]} is null"}");
-#endif
+            // #if DEBUG
+            //             Console.WriteLine($"{Variables[varName]!.ToString() ?? $"{Variables[varName]} is null"}");
+            // #endif
             return null;
         }
         public override object? VisitIdentiferExpression(IdentiferExpressionContext context)
@@ -44,7 +76,6 @@ namespace FizzleCompiler
             {
                 "*" => Multiply(left, right),
                 "/" => Divide(left, right),
-                "%" => Modulo(left, right),
                 _ => throw new NotImplementedException()
             };
         }
@@ -113,15 +144,15 @@ namespace FizzleCompiler
             if (left is string || right is string) return $"{left}{right}";
             throw new Exception($"Cannot add values of types {left?.GetType()} and {right?.GetType()}.");
         }
-        private object? Modulo(object? left, object? right)
-        {
-            if (left is int l && right is int r) return l % r;
-            if (left is float lf && right is float rf) return lf % rf;
-            if (left is int lInt && right is float rFloat) return lInt % rFloat;
-            if (left is float lFloat && right is int rInt) return lFloat % rInt;
-            if (left is string || right is string) return $"{left}{right}";
-            throw new Exception($"Cannot add values of types {left?.GetType()} and {right?.GetType()}.");
-        }
+        // private object? Modulo(object? left, object? right)
+        // {
+        //     if (left is int l && right is int r) return l % r;
+        //     if (left is float lf && right is float rf) return lf % rf;
+        //     if (left is int lInt && right is float rFloat) return lInt % rFloat;
+        //     if (left is float lFloat && right is int rInt) return lFloat % rInt;
+        //     if (left is string || right is string) return $"{left}{right}";
+        //     throw new Exception($"Cannot add values of types {left?.GetType()} and {right?.GetType()}.");
+        // }
 
         public override object? VisitWhileBlock(WhileBlockContext context)
         {
@@ -134,9 +165,9 @@ namespace FizzleCompiler
                 } while (condition(Visit(context.expression())));
             }
             else
-            {
                 Visit(context.elseIfBlock());
-            }
+
+
             return null;
         }
         public override object? VisitComparisonExpression(ComparisonExpressionContext context)
@@ -150,16 +181,25 @@ namespace FizzleCompiler
             {
                 // "==" => IsEquals(left, right),
                 // "!=" => NotEquals(left, right),
-                // ">" => GreaterThan(left, right),
+                ">" => GreaterThan(left, right),
                 "<" => LessThan(left, right),
                 // ">=" => GreaterThanOrEqual(left, right),
                 // "<=" => LessThanOrEqual(left, right),
-                _ => throw new NotImplementedException()
+                _ => throw new NotImplementedException("You fucked up")
             };
 
         }
+        private bool GreaterThan(object? left, object? right)
+        {
+            if (left is int l && right is int r) return l > r;
+            if (left is float lf && right is float rf) return lf > rf;
+            if (left is int lInt && right is float rFloat) return lInt > rFloat;
+            if (left is float lFloat && right is int rInt) return lFloat > rInt;
 
-        private object? LessThan(object? left, object? right)
+            throw new Exception($"Cannot compare values of types {left?.GetType()} and {right?.GetType()}.");
+        }
+
+        private bool LessThan(object? left, object? right)
         {
             if (left is int l && right is int r) return l < r;
             if (left is float lf && right is float rf) return lf < rf;
@@ -171,7 +211,8 @@ namespace FizzleCompiler
         private bool IsTrue(object? value)
         {
             if (value is bool b) return b;
-            if (value is int i) return i != 0;
+            // if (value is int i) return i != 0;
+
             throw new Exception("Value is not a bool.");
         }
         private bool IsFalse(object? value) => !IsTrue(value);

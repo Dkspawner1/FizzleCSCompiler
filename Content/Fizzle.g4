@@ -17,7 +17,7 @@ WHILE: 'while' | 'until';
 assignment: IDENTIFIER '=' expression;
 
 functionCall: IDENTIFIER '(' (expression (',' expression)*)? ')';
-
+// Implement += -= \n \t \r 
 expression
     : constant                              #constantExpression
     | IDENTIFIER                            #identiferExpression
@@ -30,7 +30,7 @@ expression
     | expression boolOp expression          #booleanExpression
     ;
 
-multOp: '*' | '/' | '%' ;
+multOp: '*' | '/' ;
 addOp: '+' | '-' ;
 compareOp: '==' | '!=' | '>' | '<' | '>=' | '<=' ;
 boolOp: BOOL_OPERATOR;

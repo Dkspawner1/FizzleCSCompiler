@@ -1,16 +1,7 @@
-i = 1;
-name = 'Nicholas "Nickname" Nick';
+i = 0;
 
-while i < 8
+while i < 5
 {
-    Write("i isn't big enough - " + i + " - so let's make it bigger!");
-    i = i + 4;
+    Write("test " + i);
+    i = i + 1;
 }
-else
-{
-    Write("i was big enough to begin with.");
-}
-
-j = i;
-
-Write("i is " + i + ".");
