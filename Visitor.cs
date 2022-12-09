@@ -170,6 +170,16 @@ namespace FizzleCompiler
 
             return null;
         }
+        public override object? VisitIfBlock(IfBlockContext context)
+        {
+            Func<object?, bool> condition = context.elseIfBlock().GetText() == "if" ? IsTrue : IsFalse;
+            if (condition(Visit(context.expression())))
+                Visit(context.block());
+            else
+                Visit(context.elseIfBlock());
+            return null;
+        }
+        public void PrintLeftRight(object? left, object? right) => System.Console.WriteLine($"{left}{right}");
         public override object? VisitComparisonExpression(ComparisonExpressionContext context)
         {
             var left = Visit(context.expression(0));
@@ -177,17 +187,31 @@ namespace FizzleCompiler
 
             var op = context.compareOp().GetText();
 
+
             return op switch
             {
-                // "==" => IsEquals(left, right),
-                // "!=" => NotEquals(left, right),
+                "==" => IsEquals(left, right),
+                "!=" => NotEquals(left, right),
                 ">" => GreaterThan(left, right),
                 "<" => LessThan(left, right),
                 // ">=" => GreaterThanOrEqual(left, right),
                 // "<=" => LessThanOrEqual(left, right),
-                _ => throw new NotImplementedException("You fucked up")
+                _ => throw new NotImplementedException("Invalid Operation")
             };
 
+        }
+
+        private bool IsEquals(object? left, object? right)
+        {
+            return (Equals(left, right) && left == right);
+
+            throw new Exception($"Cannot compare values of types {left?.GetType()} and {right?.GetType()}.");
+        }
+        private bool NotEquals(object? left, object? right)
+        {
+            return (!(Equals(left, right) || left == right));
+
+            throw new NotImplementedException();
         }
         private bool GreaterThan(object? left, object? right)
         {

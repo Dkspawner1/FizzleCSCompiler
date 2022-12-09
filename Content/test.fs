@@ -1,7 +1,13 @@
-i = 0;
+j = 1;
+i = j;
 
-while i < 5
+Write(i + " " + j);
+
+if i != j
 {
-    Write("test " + i);
-    i = i + 1;
+    Write("Test");
+}
+else
+{
+    Write("not a test");
 }
