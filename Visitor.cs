@@ -36,14 +36,13 @@ namespace FizzleCompiler
             if (args.Length < 1)
                 throw new Exception("Please provide the proper args length for Save.");
 
-
             var Path = args[0]!.ToString();
-
-            if (!GetExtension(Path!).Equals(".txt"))
+            var endsTxt = GetExtension(Path!).Equals(".txt");
+            if (!endsTxt)
                 Path = Environment.CurrentDirectory + "/test.txt";
-            // TODO: Fix logic
-            if (!Path!.Equals("test.txt"))
-                Contents = args[0..^1]!;
+
+            if (endsTxt)
+                Contents = args[1..^0]!;
             else
                 Contents = args[0..^0]!;
 
