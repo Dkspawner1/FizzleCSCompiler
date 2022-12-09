@@ -1,4 +1,13 @@
-j = 315;
+j = 316;
 i = 315;
 
-Save("a.txt", 1);
+if i == j
+{
+    Write(i + " is equal to " + j);
+}
+else 
+{
+    Write("I is not equal to j");
+}
+
+Save("ass.txt");

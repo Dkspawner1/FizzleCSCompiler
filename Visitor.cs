@@ -193,7 +193,17 @@ namespace FizzleCompiler
         //     if (left is string || right is string) return $"{left}{right}";
         //     throw new Exception($"Cannot add values of types {left?.GetType()} and {right?.GetType()}.");
         // }
+        public override object? VisitIfBlock(IfBlockContext context)
+        {
+            Func<object?, bool> condition = context.elseIfBlock().GetText() == "if" ? IsTrue : IsFalse;
+            if (condition(Visit(context.expression())))
+            {
+                Visit(context.block());
+            }
+            else Visit(context.elseIfBlock());
 
+            return null;
+        }
         public override object? VisitWhileBlock(WhileBlockContext context)
         {
             Func<object?, bool> condition = context.WHILE().GetText() == "while" ? IsTrue : IsFalse;
