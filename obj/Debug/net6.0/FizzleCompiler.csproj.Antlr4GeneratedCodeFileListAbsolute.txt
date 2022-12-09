@@ -1,0 +1,6 @@
+C:\Users\Nicho\Desktop\C#\FizzleCompiler\obj\Debug\net6.0\FizzleLexer.cs
+C:\Users\Nicho\Desktop\C#\FizzleCompiler\obj\Debug\net6.0\FizzleParser.cs
+C:\Users\Nicho\Desktop\C#\FizzleCompiler\obj\Debug\net6.0\FizzleListener.cs
+C:\Users\Nicho\Desktop\C#\FizzleCompiler\obj\Debug\net6.0\FizzleBaseListener.cs
+C:\Users\Nicho\Desktop\C#\FizzleCompiler\obj\Debug\net6.0\FizzleVisitor.cs
+C:\Users\Nicho\Desktop\C#\FizzleCompiler\obj\Debug\net6.0\FizzleBaseVisitor.cs
